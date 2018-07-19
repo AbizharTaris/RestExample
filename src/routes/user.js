@@ -9,6 +9,8 @@ router.get('/helloworld', (req, res) => {
   res.send('Test Router');
 });
 
+
+// GET for getting users data
 router.get('/users/:email', async (req, res) => {
   try {
     const users = await User.findOne({
@@ -24,6 +26,22 @@ router.get('/users/:email', async (req, res) => {
   }
 });
 
+// DELETE
+router.delete('/users/:email', async (req, res) => {
+  try {
+    const user = await User.findOneAndRemove({ email: req.params.email });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return res.send('Delete Succesful!');
+  } catch (error) {
+    console.log(error);
+    return res.status(400).send(error);
+  }
+});
+
+// POST for adding users data
 router.post('/users', async (req, res) => {
   const body = _.pick(req.body, ['email', 'password', 'age']);
   const newUser = new User(body);
@@ -37,6 +55,7 @@ router.post('/users', async (req, res) => {
   }
 });
 
+// PATCH for update users data
 router.patch('/users/:email', async (req, res) => {
   const body = _.pick(req.body, ['age']);
 
